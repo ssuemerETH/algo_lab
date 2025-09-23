@@ -1,0 +1,12 @@
+{
+  "public": "r",
+  "public/sample.in": "r",
+  "public/sample.out": "r",
+  "public/user_test.out": "e",
+  "public/user_test.in": "e",
+  "src": "r",
+  "src/main.cpp": "d",
+  "cx_description": "r",
+  "cx_description/english.md": "r",
+  "cx_description/conf.yml": "r"
+}
