@@ -1,0 +1,35 @@
+#include <iostream>
+#include <vector>
+
+typedef std::vector<std::vector<int>> IM;
+
+void testcase() {
+  int n; std::cin >> n;
+  std::vector<int> v; v.reserve(n);
+  for (int i = 0; i < n; i++) {
+    int vi; std::cin >> vi;
+    v.push_back(vi);
+  }
+
+  IM first_dp(n, std::vector<int>()), second_dp(n, std::vector<int>());
+  for (int i = 0; i < n; i++) {
+    first_dp[i].reserve(n - i + 1); second_dp[i].reserve(n - i + 1);
+    for (int l = 0; l <= n - i; l++) { first_dp[i].push_back(-1); second_dp[i].push_back(-1);}
+    first_dp[i][1] = v[i]; second_dp[i][1] = 0;
+  }
+
+  for (int l = 2; l <= n; l++) 
+    for (int i = 0; i <= n - l; i++) {
+      first_dp[i][l] = std::max(v[i] + second_dp[i + 1][l - 1], v[i + l - 1] + second_dp[i][l - 1]);
+      second_dp[i][l] = std::min(second_dp[i + 1][l - 1], second_dp[i][l - 1]);
+    }
+
+  std::cout << first_dp[0][n] << "\n";
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  int t; std::cin >> t;
+  for (; t > 0; t--) testcase();
+  return 0;
+}

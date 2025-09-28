@@ -1,0 +1,25 @@
+#include <iostream>
+#include <vector>
+
+typedef std::vector<std::vector<std::pair<int, int>>> ADJ;
+typedef std::vector<std::vector<int>> IM;
+
+for (int i = 0; i < n; i++) 
+      if (adj[i].empty()) dp[i][l] = dp[0][l];
+      else for (const std::pair<int, int>& p: adj[i]) dp[i][l] = std::max(dp[i][l], p.second + dp[p.first][l - 1]);
+  
+  for (int m = 0; m <= k; m++) 
+    if (dp[0][m] >= x) {
+      std::cout << m << "\n";
+      return;
+    }
+
+  std::cout << "Impossible\n";
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  int t; std::cin >> t;
+  for (; t > 0; t--) testcase();
+  return 0;
+}
