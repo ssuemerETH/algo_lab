@@ -12,7 +12,6 @@ void testcase() {
     int u, v, c; std::cin >> u >> v >> c;
     boost::add_edge(u, v, c, G);
   }
-
   
 }
 
