@@ -11,7 +11,6 @@ void testcase() {
     v.push_back(vi);
   }
 
-  // std::cout << "preloop\n";
   // for every index i in {0, ..., n - 1} compute the unique index i' >= i s.t.
   // sum(v[i...i']) = k if it exists and -1 if it does not.
   std::vector<int> ksum(n, -1);

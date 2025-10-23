@@ -1,0 +1,41 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+void testcase() {
+  int n; std::cin >> n;
+  std::vector<std::pair<int, int>> b; b.reserve(n);
+  for (int i = 0; i < n; i++) {
+    int li, pi; std::cin >> li >> pi;
+    b.push_back(std::make_pair(pi, li));
+  }
+  
+  std::sort(b.begin(), b.end());
+  int res = 1;
+  int end = b[0].first;
+  int best_end = -1;
+  for (int i = 1; i < n; i++) {
+    // check if it is possible to tie current boat
+    int li = b[i].second;
+    int pi = b[i].first;
+    if (pi <= end) continue;
+    if (best_end != -1 && pi >= best_end) {
+      end = best_end;
+      best_end = -1;
+      res++;
+    }
+    
+    int cur_end = std::max(end + li, pi);
+    if (best_end == -1 || cur_end < best_end) best_end = cur_end;
+  }
+  
+  if (best_end != -1) res++;
+  std::cout << res << "\n";
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  int t; std::cin >> t;
+  for (; t > 0; t--) testcase();
+  return 0;
+}
