@@ -1,0 +1,197 @@
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ g++ -std=c++14 -g -O3 -Wall src/main.cpp -o src/main
+src/main.cpp: In function ‘void compute_subtree_sizes(int, const ADJ&, const std::vector<int>&, std::vector<int>&)’:
+src/main.cpp:8:19: error: ‘u’ was not declared in this scope
+    8 |   for (int v: adj[u]) {
+      |                   ^
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ g++ -std=c++14 -g -O3 -Wall src/main.cpp -o src/main
+src/main.cpp: In function ‘void compute_subtree_sizes(int, const ADJ&, const std::vector<int>&, std::vector<int>&)’:
+src/main.cpp:8:19: error: ‘u’ was not declared in this scope
+    8 |   for (int v: adj[u]) {
+      |                   ^
+src/main.cpp:12:9: error: no match for ‘operator=’ (operand types are ‘std::vector<int>’ and ‘int’)
+   12 |   out = res;
+      |         ^~~
+In file included from /usr/include/c++/13/vector:72,
+                 from src/main.cpp:2:
+/usr/include/c++/13/bits/vector.tcc:210:5: note: candidate: ‘std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(const std::vector<_Tp, _Alloc>&) [with _Tp 
+= int; _Alloc = std::allocator<int>]’
+  210 |     vector<_Tp, _Alloc>::
+      |     ^~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/bits/vector.tcc:211:42: note:   no known conversion for argument 1 from ‘int’ to ‘const std::vector<int>&’
+  211 |     operator=(const vector<_Tp, _Alloc>& __x)
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+In file included from /usr/include/c++/13/vector:66:
+/usr/include/c++/13/bits/stl_vector.h:766:7: note: candidate: ‘std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(std::vector<_Tp, _Alloc>&&) [with _Tp = i
+nt; _Alloc = std::allocator<int>]’
+  766 |       operator=(vector&& __x) noexcept(_Alloc_traits::_S_nothrow_move())
+      |       ^~~~~~~~
+/usr/include/c++/13/bits/stl_vector.h:766:26: note:   no known conversion for argument 1 from ‘int’ to ‘std::vector<int>&&’
+  766 |       operator=(vector&& __x) noexcept(_Alloc_traits::_S_nothrow_move())
+      |                 ~~~~~~~~~^~~
+/usr/include/c++/13/bits/stl_vector.h:788:7: note: candidate: ‘std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(std::initializer_list<_Tp>) [with _Tp = i
+nt; _Alloc = std::allocator<int>]’
+  788 |       operator=(initializer_list<value_type> __l)
+      |       ^~~~~~~~
+/usr/include/c++/13/bits/stl_vector.h:788:46: note:   no known conversion for argument 1 from ‘int’ to ‘std::initializer_list<int>’
+  788 |       operator=(initializer_list<value_type> __l)
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ g++ -std=c++14 -g -O3 -Wall src/main.cpp -o src/main
+src/main.cpp: In function ‘void compute_subtree_sizes(int, const ADJ&, const std::vector<int>&, std::vector<int>&)’:
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ g++ -std=c++14 -g -O3 -Wall src/main.cpp -o src/main
+src/main.cpp: In function ‘void compute_subtree_sizes(int, const ADJ&, const std::vector<int>&, std::vector<int>&)’:
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/sample.in 
+-66
+10
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test1.in 
+-9928
+59
+-11474
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ gdb src/main 
+GNU gdb (Ubuntu 15.0.50.20240403-0ubuntu1) 15.0.50.20240403-git
+Copyright (C) 2024 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from src/main...
+(gdb) break 
+Display all 140 possibilities? (y or n)
+(gdb) ls
+Undefined command: "ls".  Try "help".
+(gdb) break main.cpp:50
+Breakpoint 1 at 0x1f2d: file src/main.cpp, line 52.
+(gdb) run < public/sample.in 
+Starting program: /home/ssuemer/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom/src/main < public/sample.in
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) y
+Debuginfod has been enabled.
+To make this setting permanent, add 'set debuginfod enabled on' to .gdbinit.
+Downloading separate debug info for system-supplied DSO at 0x7ffff7fc3000
+Downloading separate debug info for /lib/x86_64-linux-gnu/libstdc++.so.6                                                                                              
+Downloading separate debug info for /lib/x86_64-linux-gnu/libgcc_s.so.1                                                                                               
+[Thread debugging using libthread_db enabled]                                                                                                                         
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, testcase () at src/main.cpp:52
+52        for (int i = 0; i < k; i++)
+(gdb) print k
+$1 = 1
+(gdb) print p
+$2 = 26
+(gdb) print ts[0]
+$3 = std::vector of length 6, capacity 6 = {7, 4, 8, 5, 7, 10}
+(gdb) print adjs
+$4 = std::vector of length 1, capacity 1 = {std::vector of length 6, capacity 6 = {std::vector of length 1, capacity 1 = {1}, std::vector of length 2, capacity 2 = {
+      4, 5}, std::vector of length 0, capacity 0, std::vector of length 0, capacity 0, std::vector of length 1, capacity 1 = {3}, 
+    std::vector of length 1, capacity 1 = {2}}}
+(gdb) clear
+Deleted breakpoint 1 
+(gdb) break 52
+Breakpoint 2 at 0x555555555f2d: file src/main.cpp, line 52.
+(gdb) print adjs[0]
+$5 = std::vector of length 6, capacity 6 = {std::vector of length 1, capacity 1 = {1}, std::vector of length 2, capacity 2 = {4, 5}, 
+  std::vector of length 0, capacity 0, std::vector of length 0, capacity 0, std::vector of length 1, capacity 1 = {3}, std::vector of length 1, capacity 1 = {2}}
+(gdb) print ss[0]
+$6 = std::vector of length 6, capacity 6 = {41, 34, 8, 5, 12, 18}
+(gdb) break 67
+Breakpoint 3 at 0x55555555640c: src/main.cpp:67. (2 locations)
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/sample.in 
+5
+10
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/sample.in | diff -ub - public/sample.out 
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test1.in | diff -ub - public/test1.out                              
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test2.in | diff -ub - public/test2.out                              
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in | diff -ub - public/test3.out                              
+--- -   2025-10-28 00:12:50.920904300 +0100
++++ public/test3.out    2025-10-27 17:57:07.000000000 +0100
+@@ -1,30 +1,30 @@
+ 375
+ 143
+ 3878
+-82110
+-17248
++82111
++17249
+ 80
+ 70700
+ 36859
+-1785
++1786
+ 196
+ 0
+-57822
++57823
+ 9737
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in
+375
+143
+3878
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test4.in
+40
+660
+5547
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ xclip -selection clipboard src/main.cpp
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test4.in
+40
+660
+5546
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test4.in
+40
+660
+5547
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in
+375143
+3878clear
+82110
+17248
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in 
+375
+143
+3878
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in 
+375 and p:226
+143 and p:12
+3878 and p:554
+82110 and p:966
+17248 and p:392
+80 and p:721
+70700 and p:700
+36859 and p:899
+1785 and p:119
+196 and p:677
+0 and p:609
+57822 and p:419
+9737 and p:749
+205 and p:988
+1535 and p:472
+8505 and p:405
+388 and p:193
+500 and p:499
+6363 and p:707
+3 and p:578
+338 and p:337
+13221 and p:339
+1553 and p:771
+208 and p:52
+10912 and p:682
+57827 and p:751
+50895 and p:261
+2904 and p:484
+15158 and p:583
+3552 and p:136
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ src/main < public/test3.in 3878clear
+375 and p:226
+143 and p:12
+3878 and p:554
+ssuemer@ssuemer-ASUS-D500TC-S500MC:~/Desktop/ETH/HS25/algo_lab/w7/Worm_Kingdom$ 
