@@ -1,0 +1,5 @@
+/home/ssuemer/Desktop/ETH/HS25/algo_lab/w8/Kingdom_Defense/src/CMakeFiles/main.dir
+/home/ssuemer/Desktop/ETH/HS25/algo_lab/w8/Kingdom_Defense/src/CMakeFiles/ALL_CGAL_TARGETS.dir
+/home/ssuemer/Desktop/ETH/HS25/algo_lab/w8/Kingdom_Defense/src/CMakeFiles/cgal_check_build_system.dir
+/home/ssuemer/Desktop/ETH/HS25/algo_lab/w8/Kingdom_Defense/src/CMakeFiles/edit_cache.dir
+/home/ssuemer/Desktop/ETH/HS25/algo_lab/w8/Kingdom_Defense/src/CMakeFiles/rebuild_cache.dir
