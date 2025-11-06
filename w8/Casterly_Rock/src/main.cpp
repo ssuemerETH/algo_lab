@@ -13,6 +13,14 @@ typedef CGAL::Quadratic_program<IT> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 typedef std::pair<long, long> P2D;
 
+ET ceil_ET(CGAL::Quotient<ET> x) {
+  ET num = x.numerator(); ET den = x.denominator();
+  ET ceil_value = num / den;  // Truncates toward 0
+  if ((num > 0) && (num % den != 0)) 
+    ceil_value += 1;
+  return ceil_value;
+}
+
 void testcase() {
   int n, m; std::cin >> n >> m;
   long s; std::cin >> s;
@@ -69,16 +77,25 @@ void testcase() {
 
   const int d = 3;
   lp.set_c(d, 1);
+
   for (P2D &n: commons) {
     long x = n.first; long y = n.second;
     lp.set_a(a, cc, x); lp.set_a(cw, cc, 1); lp.set_a(cs, cc, 0); lp.set_a(d, cc, -1); lp.set_b(cc, -y); cc++;
-    lp.set_a(a, cc, -x);
+    lp.set_a(a, cc, -x); lp.set_a(cw, cc, -1); lp.set_a(cs, cc, 0); lp.set_a(d, cc, -1); lp.set_b(cc, y); cc++;
+  }
+
+  for (P2D &n: nobles) {
+   long x = n.first; long y = n.second;
+    lp.set_a(a, cc, x); lp.set_a(cw, cc, 1); lp.set_a(cs, cc, 0); lp.set_a(d, cc, -1); lp.set_b(cc, -y); cc++;
+    lp.set_a(a, cc, -x); lp.set_a(cw, cc, -1); lp.set_a(cs, cc, 0); lp.set_a(d, cc, -1); lp.set_b(cc, y); cc++;
   }
   
   sol = CGAL::solve_linear_program(lp, ET());
   if (sol.is_infeasible()) {
       std::cout << "B\n";
       return;
+  } else if (sol.is_optimal()) {
+    std::cout << ceil_ET(sol.objective_value()) << "\n";
   }
 }
 
