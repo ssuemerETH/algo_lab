@@ -39,8 +39,8 @@
 # debug information files
 *.dwo
 
-CMakeCache.txt
-CMakeFiles
-cmake_install.cmake
-CMakeLists.txt
-Makefile
+**/CMakeCache.txt
+**/CMakeFiles
+**/cmake_install.cmake
+**/CMakeLists.txt
+**/Makefile
