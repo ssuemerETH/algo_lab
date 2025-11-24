@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
+
+typedef boost::adjacency_list<
+boost::vecS,
+boost::vecS,
+boost::undirectedS,
+boost::no_property, 
+boost::property<boost::edge_weight_t, int>> graph;
+
+typedef boost::adjacency_list<
+boost::vecS,
+  boost::vecS,
+  boost::undirectedS> u_graph;
+
+typedef boost::graph_traits<u_graph>::vertex_descriptor vertex_desc;
+
+void testcase() {
+  int n, m, b, p, d; std::cin >> n >> m >> b >> p >> d;
+  graph G1(n + 1); // vertex n is artificial source for distance computation
+  
+  std::vector<int> barracks; barracks.reserve(b);
+  for (int i = 0; i < b; i++) {
+    int ai; std::cin >> ai;
+    barracks.push_back(ai);
+    boost::add_edge(n, ai, 0, G1);
+  }
+
+  std::vector<int> plaza_index(n, -1);
+  for (int i = 0; i < p; i++) {
+    int qi; std::cin >> qi;
+    plaza_index[qi] = i;
+  }
+
+  std::vector<std::pair<int, int>> edges; edges.reserve(m);
+  for (int i = 0; i < m; i++) {
+    int x, y, l; std::cin >> x >> y >> l;
+    boost::add_edge(x, y, l, G1);
+    edges.push_back(std::make_pair(x, y));
+  }
+
+  std::vector<int> dist_map(n + 1);
+  boost::dijkstra_shortest_paths(G1, n,
+				 boost::distance_map(boost::make_iterator_property_map(dist_map.begin(), boost::get(boost::vertex_index, G1))));
+
+  u_graph G2(n + p);
+  for (const std::pair<int, int> &e: edges) {
+    int u = e.first; int v = e.second;
+    if (dist_map[u] <= d && dist_map[v] <= d) {
+      boost::add_edge(u, v, G2);
+      if (plaza_index[u] != -1) boost::add_edge(n + plaza_index[u], v, G2);
+      if (plaza_index[v] != -1) boost::add_edge(u, n + plaza_index[v], G2);
+    }
+  }
+
+  std::vector<vertex_desc> mate_map(n + p);
+  boost::edmonds_maximum_cardinality_matching(G2,
+   boost::make_iterator_property_map(mate_map.begin(),
+   boost::get(boost::vertex_index, G2)));
+  
+  int matching_size = boost::matching_size(G2,
+   boost::make_iterator_property_map(mate_map.begin(),
+   boost::get(boost::vertex_index, G2)));
+
+  std::cout << matching_size << "\n";
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  int t; std::cin >> t;
+  for (; t > 0; t--) testcase();
+  return 0;
+}
