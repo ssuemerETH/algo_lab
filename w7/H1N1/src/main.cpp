@@ -23,7 +23,6 @@ boost::property<boost::edge_weight_t, long>
 typedef boost::graph_traits<graph>::edge_descriptor edge_desc;
 
 void testcase(int n) {
-  std::cout << "NEW PROB: \n";
   std::vector<K::Point_2> pts; pts.reserve(n);
   for (int i = 0; i < n; i++) {
     long xi, yi; std::cin >> xi >> yi;
@@ -40,24 +39,22 @@ void testcase(int n) {
   // at this point, fi stores the number of finite faces
   graph G(fi + 1);
   // infinite face at index fi
-  tri.infinite_face()->info() = fi;
-  std::cout << "FACES: fi: " << fi << " cgal res: " << tri.number_of_faces() << "\n";
   
   for (Face_iterator f = tri.finite_faces_begin(); f != tri.finite_faces_end(); f++) {
     long find = f->info();
     long best_w_for_inf_nbor = -1;
     for (int i = 0; i < 3; i++) {
-      long gind = f->neighbor(i)->info();
-      if (find < gind) {
-	long w = CGAL::squared_distance(f->vertex((i + 1) % 3)->point(), f->vertex((i + 2) % 3)->point());
-	if (gind == fi) 
-	  best_w_for_inf_nbor = std::max(best_w_for_inf_nbor, w); 
-	else 
+      long w = CGAL::squared_distance(f->vertex((i + 1) % 3)->point(), f->vertex((i + 2) % 3)->point());
+      if (tri.is_infinite(f->neighbor(i))) 
+	best_w_for_inf_nbor = std::max(best_w_for_inf_nbor, w);
+      else {
+	long gind = f->neighbor(i)->info();
+	if (find < gind) { 
 	  boost::add_edge(find, gind, -w, G);
-	//	std::cout << find << " to " << gind << " with w: " << w << "\n";
+	}
       }
     }
-
+    
     if (best_w_for_inf_nbor != -1)
       boost::add_edge(find, fi, -best_w_for_inf_nbor, G);
   }
@@ -72,7 +69,6 @@ void testcase(int n) {
     long w = -weight_map[*it];
     adj[u].push_back(std::make_pair(v, w));
     adj[v].push_back(std::make_pair(u, w));
-    //    std::cout << u << " to " << v << " with w: " << w << "\n";
   }
 
   // -2: not visited, -1: infinity, other values are actual bottlenecks
@@ -102,7 +98,8 @@ void testcase(int n) {
       continue;
     }
     Triangulation::Face_handle fh = tri.locate(p);
-    long ind = fh->info();
+    long ind = fi;
+    if (!tri.is_infinite(fh)) ind = fh->info();
     bool possible = bottleneck_w[ind] == -1 || (4 * d <= bottleneck_w[ind]);
     std::cout << (possible ? "y" : "n");
   }
