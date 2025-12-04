@@ -1,0 +1,87 @@
+#include <iostream>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <queue>
+#include <boost/graph/push_relabel_max_flow.hpp>
+
+typedef boost::adjacency_list<boost::vecS,
+  boost::vecS,
+  boost::undirectedS,
+  boost::no_property,
+  boost::property<boost::edge_weight_t, int,
+		  boost::property<boost::edge_capacity_t, int>>> graph;
+
+typedef boost::adjacency_list_traits<boost::vecS, boost::vecS, boost::directedS> traits;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, boost::no_property,
+boost::property<boost::edge_capacity_t, long,
+boost::property<boost::edge_residual_capacity_t, long,
+boost::property<boost::edge_reverse_t, traits::edge_descriptor>>>> flow_graph;
+
+class edge_adder {
+  flow_graph &G;
+public:
+  explicit edge_adder(flow_graph &G) : G(G) {}
+  void add_edge(int from, int to, long capacity) {
+    auto c_map = boost::get(boost::edge_capacity, G);
+    auto r_map = boost::get(boost::edge_reverse, G);
+    const auto e = boost::add_edge(from, to, G).first;
+    const auto rev_e = boost::add_edge(to, from, G).first;
+    c_map[e] = capacity;
+    c_map[rev_e] = 0; // reverse edge has no capacity!
+    r_map[e] = rev_e;
+    r_map[rev_e] = e;
+  }
+};
+
+void testcase() {
+  int n, m, s, f; std::cin >> n >> m >> s >> f;
+  graph G(n);
+  for (int i = 0; i < m; i++) {
+    int a, b, c, d; std::cin >> a >> b >> c >> d;
+    auto [e, ok] = boost::add_edge(a, b, G);
+    boost::put(boost::edge_weight, G, e, d);
+    boost::put(boost::edge_capacity, G, e, c);
+  }
+
+  std::vector<int> dist(n);
+  boost::dijkstra_shortest_paths(G, s,
+				 boost::distance_map(boost::make_iterator_property_map(dist.begin(),
+				 boost::get(boost::vertex_index, G))));
+
+  auto cap = boost::get(boost::edge_capacity, G);
+  auto len = boost::get(boost::edge_weight, G);
+  std::queue<int> q; q.push(f);
+  flow_graph fG(n); edge_adder adder(fG);
+  std::vector<bool> visited(n); 
+  
+  while (!q.empty()) {
+    int v = q.front(); q.pop();
+    if (visited[v]) continue;
+    visited[v] = true;
+    
+    auto [oe_begin, oe_end] = boost::out_edges(v, G);
+    for (auto it = oe_begin; it != oe_end; it++) {
+      int x = boost::source(*it, G);
+      int y = boost::target(*it, G);
+      int u = (x == v) ? y : x;
+
+      int cur_len = len[*it];
+      int cur_cap = cap[*it];
+      if (dist[v] == dist[u] + cur_len) {
+	//	std::cout << "ADDING: " << u << " TO: " << v << " with cap: " << cur_cap << "\n";
+	adder.add_edge(u, v, cur_cap);
+	q.push(u);
+      }
+    }
+  }
+
+  long flow = boost::push_relabel_max_flow(fG, s, f);
+  std::cout << flow << "\n";
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  int t; std::cin >> t;
+  for (; t > 0; t--) testcase();
+  return 0;
+}
