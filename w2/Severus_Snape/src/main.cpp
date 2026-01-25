@@ -2,71 +2,55 @@
 #include <vector>
 #include <algorithm>
 
-typedef std::vector<std::pair<long, long>> PV;
-typedef std::vector<std::vector<std::vector<long>>> LM;
+typedef std::vector<std::vector<std::vector<long>>> M3D;
 
 void testcase() {
   int n, m; std::cin >> n >> m;
   long a, b; std::cin >> a >> b;
   long P, H, W; std::cin >> P >> H >> W;
-  
-  PV A; A.reserve(n);
-  for (int i = 0; i < n; i++) {
-    long api, ahi; std::cin >> api >> ahi;
-    A.push_back(std::make_pair(api, ahi));
-  }
-  
-  std::vector<long> B; B.reserve(m);
-  for (int i = 0; i < m; i++) {
-    long bwi; std::cin >> bwi;
-    B.push_back(bwi);
-  }
-  
-  // dp[i][k][h] = max. achievable power using A[0...i] with at most k potions (of type A) granting at least h happiness (-1 if no subset of k potions among A[0...i] grants at least h happiness)
-  LM dp(n, std::vector<std::vector<long>>(n + 1, std::vector<long>(H + 1, -1)));
-  
-  // DP table initialization:
-  
-  // with at most 0 potions and a lower bound of 0 happiness, a maximum power of 0 is possible.
-  for (int i = 0; i < n; i++) dp[i][0][0] = 0;
-  
-  // if only A[0] is available and it may be used, we check whether it yields enough happiness
+  std::vector<long> p(n), h(n), w(m);
+  for (int i = 0; i < n; i++) std::cin >> p[i] >> h[i];
+  for (int i = 0; i < m; i++) std::cin >> w[i];
+
+  std::sort(w.begin(), w.end(), std::greater<long>());
+  std::vector<long> w_pref(m + 1);
+  for (int i = 1; i <= m; i++) w_pref[i] = w_pref[i - 1] + w[i - 1];
+
+  M3D dp(n, std::vector<std::vector<long>>(n + 1, std::vector<long>(H + 1, -1L)));
+  for (int i = 0; i < n; i++) dp[i][0][0] = 0L;
   for (int k = 1; k <= n; k++)
-    for (long h = 0; h <= std::min(H, A[0].second); h++) dp[0][k][h] = A[0].first;
-      
-  // inductive phase: i -> i + 1, keep k > 0
+    for (int q = 0; q <= std::min(h[0], H); q++)
+      dp[0][k][q] = p[0];
+
   for (int i = 1; i < n; i++)
     for (int k = 1; k <= n; k++)
-      for (long h = 0; h <= H; h++) {
-        // use A[i]
-        long rec = dp[i - 1][k - 1][std::max(0L, h - A[i].second)];
-        // if happiness of max(0, h - A[i].h) possible, update
-        if (rec != -1) dp[i][k][h] = A[i].first + rec;
-        // don't use A[i]
-        dp[i][k][h] = std::max(dp[i][k][h], dp[i - 1][k][h]);
+      for (long q = 0; q <= H; q++) {
+	long res = -1;
+	
+	long res_use = dp[i - 1][k - 1][std::max(0L, q - h[i])];
+	if (res_use != -1) res = p[i] + res_use;
+	
+	long res_no_use = dp[i - 1][k][q];
+	res = std::max(res, res_no_use);
+	dp[i][k][q] = res;
       }
-  
-  std::sort(B.begin(), B.end(), std::greater<long>());
-  
-  long res = n + m + 1;
-  long gathered_wit = 0;
-  for (int i = 0; i < m; i++) {
-    gathered_wit += B[i];
-    if (gathered_wit < W) continue;
-    long allowed_a_pots = std::min(a > 0 ? (gathered_wit - W) / a : n, (long) n);
+
+  int ans = n + m + 1;
+  for (int i = 0; i <= m; i++) {
+    long W_new = w_pref[i] - W;
+    if (W_new < 0) continue;
     
-    // drank i + 1 potions of type B, so need an additional power of (i + 1) * b while drinking potions of type A
-    long needed_power = P + (i + 1) * b;
-  
-    // determine minimum k in the range {0, ..., allowed_a_pots} s.t. it grants at least H happiness and yields a max. achievable power of needed_power
-    for (long k = 0; k <= allowed_a_pots; k++)
-      if (dp[n - 1][k][H] >= needed_power) { 
-        res = std::min(res, i + 1 + k);
-        break;
+    long pot_limit = (a == 0 ? n : std::min(W_new / a, (long) n));
+    for (int k = 0; k <= pot_limit; k++) {
+      if (dp[n - 1][k][H] >= P + b * i) {
+	ans = std::min(ans, i + k);
+	break;
       }
+    }
   }
-  
-  std::cout << (res == n + m + 1 ? -1 : res) << "\n";
+
+  if (ans > n + m) ans = -1;
+  std::cout << ans << "\n";
 }
 
 int main() {

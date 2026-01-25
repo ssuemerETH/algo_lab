@@ -1,110 +1,104 @@
 #include <iostream>
 #include <vector>
 
-typedef std::vector<std::vector<int>> IM;
-typedef std::pair<int, int> IP;
-typedef std::vector<IP> PV;
+typedef std::vector<std::vector<int>> VVI;
 
-int p_compare(const IP& i1_best, const IP& i1_sec_best, const IP& i2_best, const IP& i2_sec_best) {
-  if (i1_best.second == -1 || i2_best.second == -1) return -1;
+struct PrefixInfo {
+  int waterway_index, length;
 
-  if (i1_best.second != i2_best.second) return i1_best.first + i2_best.first;
-  int res = -1;
-
-  if (i2_sec_best.second != -1) res = i1_best.first + i2_sec_best.first;
-  if (i1_sec_best.second != -1) res = std::max(res, i1_sec_best.first + i2_best.first);
-  return res;
-}
-
-int max_k(const std::vector<int>& arr, int k) {
-  int n = arr.size();
-  int i, j; i = j = 0;
-  int sum = arr[i];
-  int res = -1;
-
-  while (j < n) {
-    if (sum == k) {
-      res = std::max(res, j - i + 1);
-      j++;
-      if (j < n) sum += arr[j];
-    } else if (sum < k) {
-      j++;
-      if (j < n) sum += arr[j];
-    } else {
-      sum -= arr[i];
-      i++;
-      if (i > j) {
-	j++;
-	if (j < n) sum += arr[j];
-      }
-    }
+  bool operator<(const PrefixInfo &other) const {
+    return length < other.length;
   }
-
-  return res;
-}
+};
 
 void testcase() {
   int n, k, w; std::cin >> n >> k >> w;
-  std::vector<int> c; c.reserve(n);
-  for (int i = 0; i < n; i++) {
-    int ci; std::cin >> ci;
-    c.push_back(ci);
-  }
+  std::vector<int> c(n);
+  for (int i = 0; i < n; i++) std::cin >> c[i];
 
-  IM ww(w, std::vector<int>());
-  
-  // read waterways
+  // waterways, containing c-values, not island indices
+  // Pyke not included in any waterway
+  VVI waterway(w, std::vector<int>());
   for (int i = 0; i < w; i++) {
-    int l, pyke; std::cin >> l >> pyke;
-    ww[i].reserve(l - 1);
+    int l; std::cin >> l;
+    int pyke_c; std::cin >> pyke_c;
     for (int j = 0; j < l - 1; j++) {
-      int rj; std::cin >> rj;
-      ww[i].push_back(c[rj]);
+      int rij; std::cin >> rij;
+      waterway[i].push_back(c[rij]);
     }
   }
 
-  int single_res = -1;
-  // for each waterway, find the length of a largest contiguous subarray summing to k
-  for (int i = 0; i < w; i++) single_res = std::max(single_res, max_k(ww[i], k));
+  // find the optimal solution not containing Pyke
+  int res = 0;
+  for (int i = 0; i < w; i++) {
+    int l = 0; int r = 0;
+    int sum = waterway[i][0];
+    int ni = waterway[i].size();
+    while (r < ni) {
+      if (sum == k) {
+	res = std::max(res, r - l + 1);
+	r++;
+	if (r < ni) sum += waterway[i][r];
+      } else if (sum < k) {
+	r++;
+	if (r < ni) sum += waterway[i][r];
+      } else {
+	sum -= waterway[i][l];
+	l++;
+	if (l > r) {
+	  r++;
+	  if (r < ni) sum += waterway[i][r];
+	}
+      }
+    }
+  
+  }
 
+  // find the optimal solution containing Pyke
   if (c[0] > k) {
-    if (single_res == -1) std::cout << 0 << "\n";
-    else std::cout << single_res << "\n";
+    std::cout << res << "\n";
     return;
   }
 
   k -= c[0];
-
-  // find two waterways s.t. they have prefix sums that sum to k AND the total lengths of these prefixes is maximised.
-  // for each i in {0, ..., k} we will record the two waterways that have some prefix summing to i and s.t. these prefixes are longest possible
-  PV best(k + 1, std::make_pair(-1, -1)), sec_best(k + 1, std::make_pair(-1, -1));
-  best[0] = std::make_pair(0, 0); sec_best[0] = std::make_pair(0, 1);
-
+  std::vector<PrefixInfo> best_pref_info(k + 1, PrefixInfo{-1, -n - 1});
+  std::vector<PrefixInfo> snd_best_pref_info(k + 1, PrefixInfo{-1, -n - 1});
+  best_pref_info[0] = PrefixInfo{0, 0};
+  snd_best_pref_info[0] = PrefixInfo{1, 0};
+  
   for (int i = 0; i < w; i++) {
     int sum = 0;
-    for (int j = 0; j < ww[i].size(); j++) {
-      sum += ww[i][j];
-      if (sum > k) break;
-      std::pair<int, int> cur(j + 1, i);
-      if (cur > best[sum]) {
-	sec_best[sum] = best[sum];
-	best[sum] = cur;
-      } else if (cur > sec_best[sum]) sec_best[sum] = cur;
+    int ni = waterway[i].size();
+    for (int j = 0; j < ni; j++) {
+      sum += waterway[i][j];
+      PrefixInfo pref{i, j + 1};
+      if (sum <= k) {
+	if (best_pref_info[sum] < pref) {
+	  snd_best_pref_info[sum] = best_pref_info[sum];
+	  best_pref_info[sum] = pref;
+	} else if (snd_best_pref_info[sum] < pref)
+	  snd_best_pref_info[sum] = pref;
+      } else break;
     }
   }
 
-  int pyke_res = -1;
   for (int q = 0; q <= k; q++) {
-    int cur_comb = p_compare(best[q], sec_best[q], best[k - q], sec_best[k - q]);
-    if (cur_comb != -1) pyke_res = std::max(pyke_res, 1 + cur_comb);
+    PrefixInfo best_q = best_pref_info[q];
+    PrefixInfo snd_best_q = snd_best_pref_info[q];
+
+    PrefixInfo best_qc = best_pref_info[k - q];
+    PrefixInfo snd_best_qc = snd_best_pref_info[k - q];
+    
+    if (best_q.waterway_index != best_qc.waterway_index)
+      res = std::max(res, best_q.length + best_qc.length + 1);
+    else {
+      res = std::max(res, best_q.length + snd_best_qc.length + 1);
+      res = std::max(res, snd_best_q.length + best_qc.length + 1);
+    }
   }
 
-  int res = std::max(single_res, pyke_res);
-  if (res == -1) std::cout << 0 << "\n";
-  else std::cout << res << "\n";
+  std::cout << res << "\n";
 }
-
-
 
 int main() {
   std::ios_base::sync_with_stdio(false);

@@ -12,18 +12,21 @@ void testcase() {
     adj[u].push_back(std::make_pair(v, p));
   }
 
-  // dp[i][l] is the maximum number of possible achievable points starting at i with l moves
-  LM dp(n, std::vector<long>(k + 1, -1L));
-  for (int i = 0; i < n; i++) dp[i][0] = 0L;
+  LM dp(n, std::vector<long>(k + 1, 0));
+  for (int c = 1; c <= k; c++) 
+    for (int i = 0; i < n; i++) {
+      if (adj[i].empty()) dp[i][c] = dp[0][c];
+      else {
+	for (const std::pair<int, long> &p: adj[i]) {
+	  int j = p.first; long reward = p.second;
+	  dp[i][c] = std::max(dp[i][c], reward + dp[j][c - 1]);
+	}
+      }
+    }
 
-  for (int l = 1; l <= k; l++) 
-    for (int i = 0; i < n; i++) 
-      if (adj[i].empty()) dp[i][l] = dp[0][l];
-      else for (const std::pair<int, long>& p: adj[i]) dp[i][l] = std::max(dp[i][l], p.second + dp[p.first][l - 1]);
-  
-  for (int m = 0; m <= k; m++) 
-    if (dp[0][m] >= x) {
-      std::cout << m << "\n";
+  for (int c = 0; c <= k; c++)
+    if (dp[0][c] >= x) {
+      std::cout << c << "\n";
       return;
     }
 

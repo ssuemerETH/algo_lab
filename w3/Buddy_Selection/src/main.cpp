@@ -1,52 +1,50 @@
 #include <iostream>
-#include <map> 
+#include <map>
 #include <vector>
-#include <set>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/max_cardinality_matching.hpp>
 
-typedef std::vector<std::vector<int>> IM;
-typedef std::map<std::string, std::set<int>> II; // inverted index
-typedef boost::adjacency_list<boost::vecS,
-boost::vecS,
-boost::undirectedS> graph;
-
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
 typedef boost::graph_traits<graph>::vertex_descriptor vertex_desc;
 
 void testcase() {
   int n, c, f; std::cin >> n >> c >> f;
-  IM w(n, std::vector<int>(n, 0));
-  II char_to_stu;
-  
+  std::map<std::string, std::vector<int>> inv_index;
   for (int i = 0; i < n; i++)
     for (int j = 0; j < c; j++) {
       std::string ch; std::cin >> ch;
-      if (char_to_stu.find(ch) == char_to_stu.end()) 
-        char_to_stu[ch] = std::set<int>();
-      char_to_stu[ch].insert(i); 
+      if (inv_index.find(ch) == inv_index.end()) inv_index[ch] = std::vector<int>();
+      inv_index[ch].push_back(i);
     }
-  
-  for (std::map<std::string, std::set<int>>::iterator it = char_to_stu.begin(); it != char_to_stu.end(); it++) 
-    for (int x: it->second)
-      for (int y: it->second)
-        if (x < y) w[x][y]++;
-  
+
+  std::vector<std::vector<int>> common_char(n, std::vector<int>(n));
+  for (const auto& [ch, vec]: inv_index) {
+    int len = vec.size();
+    for (int i = 0; i < len; i++)
+      for (int j = i + 1; j < len; j++) {
+	int su = vec[i];
+	int sv = vec[j];
+	if (su > sv) std::swap(su, sv);
+	common_char[su][sv]++;
+      }
+  }
+
   graph G(n);
-  for (int i = 0; i < n; i++) 
-    for (int j = i + 1; j < n; j++)
-      if (w[i][j] > f) boost::add_edge(i, j, G);
-  
-  std::vector<vertex_desc> mate(n);
+  for (int u = 0; u < n; u++)
+    for (int v = u + 1; v < n; v++)
+      if (common_char[u][v] > f) boost::add_edge(u, v, G);
+
+  std::vector<vertex_desc> mate_map(n);
   boost::edmonds_maximum_cardinality_matching(G,
-    boost::make_iterator_property_map(mate.begin(),
-    boost::get(boost::vertex_index, G)));
+	boost::make_iterator_property_map(mate_map.begin(),
+        boost::get(boost::vertex_index, G)));
   
   int matching_size = boost::matching_size(G,
-    boost::make_iterator_property_map(mate.begin(),
-    boost::get(boost::vertex_index, G)));
-  
-  if (2 * matching_size == n) std::cout << "not optimal\n";
+        boost::make_iterator_property_map(mate_map.begin(),
+        boost::get(boost::vertex_index, G)));
+
+  if (matching_size == n / 2) std::cout << "not optimal\n";
   else std::cout << "optimal\n";
 }
 

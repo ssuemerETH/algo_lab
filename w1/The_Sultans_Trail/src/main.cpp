@@ -2,21 +2,25 @@
 #include <vector>
 #include <algorithm>
 
+typedef std::vector<std::pair<int, bool>> IBV;
+
 void testcase() {
   int n; std::cin >> n;
-  std::vector<std::pair<int, int>> p; p.reserve(2 * n);
+  IBV events; events.reserve(2 * n);
   for (int i = 0; i < n; i++) {
-    int li, ri; std::cin >> li >> ri;
-    p.push_back(std::make_pair(li, 1));
-    p.push_back(std::make_pair(ri + 1, -1));
+    int l, r; std::cin >> l >> r;
+    events.push_back(std::make_pair(l, true));
+    events.push_back(std::make_pair(r + 1, false));
   }
 
-  std::sort(p.begin(), p.end());
-
-  int max, sum; max = sum = 0;
+  std::sort(events.begin(), events.end());
+  int max = 0;
+  int cur = 0;
   for (int i = 0; i < 2 * n; i++) {
-    sum += p[i].second;
-    max = std::max(max, sum);
+    bool beg = events[i].second;
+    if (beg) cur++;
+    else cur--;
+    max = std::max(max, cur);
   }
 
   std::cout << max << "\n";

@@ -1,58 +1,54 @@
 #include <iostream>
 #include <vector>
 
-typedef std::vector<std::vector<int>> IM;
-
 void testcase() {
   int n, m, k; std::cin >> n >> m >> k;
-  std::vector<int> v; v.reserve(n);
-  for (int i = 0; i < n; i++) {
-    int vi; std::cin >> vi;
-    v.push_back(vi);
-  }
+  std::vector<int> horcrux(n);
+  for (int i = 0; i < n; i++) std::cin >> horcrux[i];
+  std::vector<int> k_pointer(n, -1);
 
-  // for every index i in {0, ..., n - 1} compute the unique index i' >= i s.t.
-  // sum(v[i...i']) = k if it exists and -1 if it does not.
-  std::vector<int> ksum(n, -1);
-  int sum = v[0];
-  int i, j; i = j = 0;
-  while (j < n) {
+  int l = 0; int r = 0;
+  int sum = horcrux[0];
+  while (r < n) {
     if (sum == k) {
-      ksum[i] = j;
-      j++;
-      if (j < n) sum += v[j];
+      k_pointer[l] = r;
+      sum -= horcrux[l];
+      l++;
+      if (l > r) {
+	r++;
+	if (r < n) sum += horcrux[r];
+      }
     } else if (sum < k) {
-      j++;
-      if (j < n) sum += v[j];
+      r++;
+      if (r < n) sum += horcrux[r];
     } else {
-      sum -= v[i];
-      i++;
-      if (i > j) {
-	j++;
-	if (j < n) sum += v[j];
+      sum -= horcrux[l];
+      l++;
+      if (l > r) {
+	r++;
+	if (r < n) sum += horcrux[r];
       }
     }
-
-    // std::cout << "loop\n";
   }
-  
-  IM dp(n + 1, std::vector<int>(m + 1, -1));
 
-  // if there are q members left, feasible plan exists but has value zero.
+  std::vector<std::vector<int>> dp(n + 1, std::vector<int>(m + 1, -1));
   for (int i = 0; i <= n; i++) dp[i][0] = 0;
-
   for (int i = n - 1; i >= 0; i--)
     for (int q = 1; q <= m; q++) {
-      int res = -1;
-      int ip = ksum[i];
-      if (ip != -1 && dp[ip + 1][q - 1] != -1) res = (ip - i + 1) + dp[ip + 1][q - 1];
-      res = std::max(res, dp[i + 1][q]);
+      int res = dp[i + 1][q];
+      if (k_pointer[i] != -1) {
+	int cur_eff = k_pointer[i] - i + 1;
+	int rec_res = dp[k_pointer[i] + 1][q - 1];
+	if (rec_res != -1)
+	  res = std::max(res, cur_eff + rec_res);
+      }
+
       dp[i][q] = res;
     }
 
-  int fin = dp[0][m];
-  if (fin == -1) std::cout << "fail\n";
-  else std::cout << fin << "\n";
+  int res = dp[0][m];
+  if (res == -1) std::cout << "fail\n";
+  else std::cout << res << "\n";
 }
 
 int main() {

@@ -5,39 +5,33 @@ typedef std::vector<std::vector<int>> IM;
 
 void testcase() {
   int n; std::cin >> n;
-  IM M(n, std::vector<int>());
+  IM pref; pref.reserve(n);
   for (int i = 0; i < n; i++) {
-    M[i].reserve(n);
+    pref.push_back(std::vector<int>());
+    pref[i].reserve(n + 1);
+    pref[i].push_back(0);
     for (int j = 0; j < n; j++) {
-      int mij; std::cin >> mij;
-      M[i].push_back(mij);
+      int xij; std::cin >> xij;
+      pref[i].push_back(xij + pref[i][j]);
     }
   }
-  
-  IM P(n, std::vector<int>());
-  for (int i = 0; i < n; i++) {
-    P[i].reserve(n);
-    P[i].push_back(M[i][0]);
-    for (int j = 1; j < n; j++) {
-      P[i].push_back(P[i][j - 1] + M[i][j]);
-    }
-  }
-  
-  int total = 0;
-  for (int j1 = 0; j1 < n; j1++)
-    for (int j2 = j1; j2 < n; j2++) {
-      int even_c = 1;
+
+  int res = 0;
+  for (int j1 = 0; j1 <= n; j1++)
+    for (int j2 = j1 + 1; j2 <= n; j2++) {
+      int even_pref = 1;
       int sum = 0;
       for (int i = 0; i < n; i++) {
-        sum += P[i][j2] - (j1 > 0 ? P[i][j1 - 1] : 0);
-        if (sum % 2 == 0) even_c++;
+	sum += pref[i][j2] - pref[i][j1];
+	if (sum % 2 == 0) even_pref++;
       }
-      
-      int odd_c = n + 1 - even_c;
-      total += even_c * (even_c - 1) / 2 + odd_c * (odd_c - 1) / 2;
+
+      int odd_pref = n + 1 - even_pref;
+      res += even_pref * (even_pref - 1) / 2;
+      res += odd_pref * (odd_pref - 1) / 2;
     }
-  
-  std::cout << total << "\n";
+
+  std::cout << res << "\n";
 }
 
 int main() {

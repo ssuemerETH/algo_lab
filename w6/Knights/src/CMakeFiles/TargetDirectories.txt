@@ -1,5 +1,5 @@
-/home/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/main.dir
-/home/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/ALL_CGAL_TARGETS.dir
-/home/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/cgal_check_build_system.dir
-/home/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/edit_cache.dir
-/home/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/rebuild_cache.dir
+/Users/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/main.dir
+/Users/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/ALL_CGAL_TARGETS.dir
+/Users/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/cgal_check_build_system.dir
+/Users/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/edit_cache.dir
+/Users/ssuemer/Desktop/ETH/HS25/algo_lab/w6/Knights/src/CMakeFiles/rebuild_cache.dir

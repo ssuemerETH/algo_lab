@@ -3,33 +3,24 @@
 
 typedef std::vector<std::vector<int>> IM;
 
-int solve(bool my_turn, int left, int right, IM& first_dp, IM& second_dp, const std::vector<int>& v) {
-  if (my_turn && first_dp[left][right] != -1) return first_dp[left][right];
-  if (!my_turn && second_dp[left][right] != -1) return second_dp[left][right];
-
-  if (left == right) return my_turn ? v[left] : 0;
-  
-  if (my_turn) {
-    first_dp[left][right] = v[left] + solve(false, left + 1, right, first_dp, second_dp, v);
-    first_dp[left][right] = std::max(first_dp[left][right], v[right] + solve(false, left, right - 1, first_dp, second_dp, v));
-    return first_dp[left][right];
-  } else {
-    second_dp[left][right] = solve(true, left + 1, right, first_dp, second_dp, v);
-    second_dp[left][right] = std::min(second_dp[left][right], solve(true, left, right - 1, first_dp, second_dp, v));
-    return second_dp[left][right];
-  }
-}
-
 void testcase() {
   int n; std::cin >> n;
-  std::vector<int> v; v.reserve(n);
-  for (int i = 0; i < n; i++) {
-    int vi; std::cin >> vi;
-    v.push_back(vi);
-  }
+  std::vector<int> v(n);
+  for (int i = 0; i < n; i++) std::cin >> v[i];
+  // dp0[i][l] is the optimal value attainable (for player 0) if player 0 starts and
+  // coins at i, i + 1, ..., i + l - 1 are available
 
-  IM first_dp(n, std::vector<int>(n, -1)), second_dp(n, std::vector<int>(n, -1));
-  std::cout << solve(true, 0, n - 1, first_dp, second_dp, v) << "\n";
+  // dp1[i][l] is the optimal value attainable (for player 0) if player 1 starts and
+  // coins at i, i + 1, ..., i + l - 1 are available
+  IM dp0(n + 1, std::vector<int>(n + 1)), dp1(n + 1, std::vector<int>(n + 1));
+
+  for (int l = 1; l <= n; l++)
+    for (int i = 0; i < n - l + 1; i++) {
+      dp0[i][l] = std::max(v[i] + dp1[i + 1][l - 1], v[i + l - 1] + dp1[i][l - 1]);
+      dp1[i][l] = std::min(dp0[i + 1][l - 1], dp0[i][l - 1]);
+    }
+
+  std::cout << dp0[0][n] << "\n";
 }
 
 int main() {

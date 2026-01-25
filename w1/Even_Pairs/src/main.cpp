@@ -1,24 +1,17 @@
 #include <iostream>
-#include <vector>
 
 void testcase() {
   int n; std::cin >> n;
-  std::vector<int> x; x.reserve(n);
-  for (int i = 0; i < n; i++) {
-    int xi; std::cin >> xi;
-    x.push_back(xi);
-  }
-  
-  int even_c = 1;
+  int even_prefs = 1;
   int sum = 0;
   for (int i = 0; i < n; i++) {
-    sum += x[i];
-    if (sum % 2 == 0) even_c++;
+    int xi; std::cin >> xi;
+    sum += xi;
+    if (sum % 2 == 0) even_prefs++;
   }
-  
-  int odd_c = n + 1 - even_c;
-  int res = even_c * (even_c - 1) / 2 + odd_c * (odd_c - 1) / 2;
-  std::cout << res << "\n";
+
+  int odd_prefs = n + 1 - even_prefs;
+  std::cout << (even_prefs * (even_prefs - 1) / 2 + odd_prefs * (odd_prefs - 1) / 2) << "\n";
 }
 
 int main() {
